@@ -335,5 +335,374 @@ Rings | Apps
 
 ![Image of priv](images/5/4.jpeg)
 
+###### Kernel Space
+
+- Drivers run in ```Ring 1``` and ```Ring 2```
+- Modern micro-kernel are pushing drivers into userspace
+- Random number generation is very difficult
+
+###### Kernel modification
+
+- Modifying the kernel requires recompiling it, and rebooting from the new kernel
+- Difficult to use this in attack chain
+- On the Fly kernel modification
+
+	Utility | Use
+	--------|--------
+	  kexec | system call that enables you to load and boot into another kernel from the currently running kernel
+	  ksplice | applying patches without the need to reboot
+
+###### init process (user space, ring 3)
+
+- Init is the father of all processes
+- It establishes and operates the entire user space
+- It takes a parameter: runlevel (from 1 to 6)
+	- Run level determines which subsystems are run
+- Executes:
+	- Scripts to set up all non-operating system services and structures for the user environment
+	- Checks and mounts the file system
+- Spawns the gui (if configured to)
+- Then presents the user with the login screen
+- Init scripts are located usually in directories such as
+
+	```sh
+	l32@l32-VirtualBox:~$ ls /etc/rc
+	rc0.d/    rc1.d/    rc2.d/    rc3.d/    rc4.d/    rc5.d/    rc6.d/    rc.local  rcS.d/
+	l32@l32-VirtualBox:~$
+	```
+- The toplevel configuration file for init is at ```/etc/inittab```
+- Init checks for the runlevel parameter in ```/etc/inittab``` as well
+- Init goes dormant after all of the specified processes have been spawned
+- Waits for 3 things to happen:
+	- A process init has started is ending / dying
+	- A power failure signal
+	- A request to ```/sbin/telnit``` to change the run level
+- There are other init alternative binaries (depending on the system), such as ```systemd``` or ```upstart```
+
+###### User Space
+
+- More security layers here
+- ```root``` is king
+- Common to have a single user account per service (apache's httpd, mysqld)
+	- Can be set to no login
+	- The least privilege principle...
+
+###### File system, deleting files
+
+- Data gets left on the disk, and the ```inode``` is just unlinked 
+- So sectors usually have old data from other files in them unless securely deleted
+
+###### File system basics ( ext2/ext3.. ufs, ffs, and others derived from the original fast file system (ffs)
+
+![Image of Delete](images/5/5.jpeg)
+
+![Image of Delete](images/5/6.jpeg)
+
+General delete behavior (can differ per file system!!!)
+
+![Image of Delete](images/5/7.jpeg)
+
+![Image of Delete](images/5/8.jpeg)
+
+###### Generic directory layout for linux distros
+
+![Image of Delete](images/5/filesystem-structure.png)
+
+- ```< / >```
+
+	- This is the root directory.
+	- This is where the Linux FS begins.
+	- Every other directory is under it.
+	- Do not confuse it with the root account, or the root account's home directory.
+
+- ```< /usr/bin >```
+
+	- It contains other applications for the users
+
+	
+- ```< /usr/sbin >```
+
+	- Most system administration programs are here
+
+- ```< /usr >```
+
+	- Most user applications, their source code, pictures, docs, and other config files.  
+	- ```/usr``` is the largest directory on a linux system.
+
+- ```< /boot >```
+
+	- Boot info is stored here.  
+	- The linux kernel is also kept here.  
+	- The file ```vmlinuz``` is the kernel.
+
+- ```< /root >``` 
+
+	- The superuser's (root) home directory
+
+- ```< /var >```
+
+	- Contains frequently changed variable data when the system is running.  
+	- Also contains logs ```/var/log```, mail ```/var/mail```, and print info ```/var/spool```
+
+- ```< /dev >```
+
+	- Contains all device info for the linux system. 
+	- Devices are treated like files in linux, and you can read/write to them just like files
+
+- ```< /proc >```
+
+	- This is a special, and interesting directory.
+	- ```/proc``` is actually a virtual directory
+	- It contains info on:
+		- the kernel
+		- all processes info
+		- Contains special files that permit access to the current configuration of the system.
+
+###### Users and groups
+
+- [Linux File permissions](https://www.linux.com/learn/understanding-linux-file-permissions) ```_rwxrwxrwx 1 owner:group```
+- [WHAT IS A STICKY BIT AND HOW TO SET IT IN LINUX?](http://www.linuxnix.com/sticky-bit-set-linux/)
+- [WHAT IS SUID AND HOW TO SET SUID IN LINUX/UNIX?](http://www.linuxnix.com/suid-set-suid-linuxunix/)
+
+```sh
+l32@l32-VirtualBox:~$ touch sample
+```
+
+```sh
+l32@l32-VirtualBox:~$ ls -l sample
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:11 sample
+l32@l32-VirtualBox:~$
+```
+
+```sh
+l32@l32-VirtualBox:~$ chmod a+rwx sample
+```
+
+```sh
+l32@l32-VirtualBox:~$ ls -l sample
+-rwxrwxrwx 1 l32 l32 0 Aug 13 12:11 sample
+l32@l32-VirtualBox:~$
+```
+
+```sh
+l32@l32-VirtualBox:~$ chmod a-x sample
+```
+
+```sh
+l32@l32-VirtualBox:~$ ls -l sample
+-rw-rw-rw- 1 l32 l32 0 Aug 13 12:11 sample
+l32@l32-VirtualBox:~$
+```
+
+```sh
+l32@l32-VirtualBox:~$ mkdir sample_dir
+```
+
+```sh
+l32@l32-VirtualBox:~$ ls -l
+total 36
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:59 Desktop
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:54 Documents
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:54 Downloads
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:54 Music
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:54 Pictures
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:54 Public
+-rw-rw-rw- 1 l32 l32    0 Aug 13 12:11 sample
+drwxrwxr-x 2 l32 l32 4096 Aug 13 12:12 sample_dir
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:54 Templates
+drwxr-xr-x 2 l32 l32 4096 Aug 12 14:54 Videos
+l32@l32-VirtualBox:~$
+```
+
+- Symbolic Link
+
+```sh
+l32@l32-VirtualBox:~$ ln -s sample sym_link_sample
+```
+
+```sh
+l32@l32-VirtualBox:~$ ls -l sym_link_sample
+lrwxrwxrwx 1 l32 l32 6 Aug 13 12:13 sym_link_sample -> sample
+l32@l32-VirtualBox:~$
+```
+
+- SUID
+
+```sh
+l32@l32-VirtualBox:~$ touch suid_binary
+```
+
+```sh
+l32@l32-VirtualBox:~$ ls -l suid_binary
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:17 suid_binary
+l32@l32-VirtualBox:~$
+```
+
+```sh
+l32@l32-VirtualBox:~$ chmod u+s suid_binary
+```
+
+```sh
+l32@l32-VirtualBox:~$ ls -l suid_binary
+-rwSrw-r-- 1 l32 l32 0 Aug 13 12:17 suid_binary
+l32@l32-VirtualBox:~$
+```
+
+- Sticky bit permissions
+
+```sh
+l32@l32-VirtualBox:/tmp$ mkdir sticky_dir
+```
+
+```sh
+l32@l32-VirtualBox:/tmp$ ls -l
+total 4
+drwxrwxr-x 2 l32 l32 4096 Aug 13 12:27 sticky_dir
+l32@l32-VirtualBox:/tmp$
+```
+
+```sh
+l32@l32-VirtualBox:/tmp$ chmod +t sticky_dir/
+```
+
+```sh
+l32@l32-VirtualBox:/tmp$ ls -l
+total 4
+drwxrwxr-t 2 l32 l32 4096 Aug 13 12:27 sticky_dir
+l32@l32-VirtualBox:/tmp$
+```
+
+```sh
+l32@l32-VirtualBox:/tmp$ cd sticky_dir/
+l32@l32-VirtualBox:/tmp/sticky_dir$ ls -l
+total 0
+l32@l32-VirtualBox:/tmp/sticky_dir$ touch 1 2 3 4 5 6 7 8 9 0
+l32@l32-VirtualBox:/tmp/sticky_dir$ ls -l
+total 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 1
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 2
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 3
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 4
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 5
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 6
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 7
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 8
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 9
+l32@l32-VirtualBox:/tmp/sticky_dir$
+```
+
+```sh
+l32@l32-VirtualBox:/tmp/sticky_dir$ sudo useradd -m tim
+[sudo] password for l32:
+l32@l32-VirtualBox:/tmp/sticky_dir$
+l32@l32-VirtualBox:/tmp/sticky_dir$ sudo passwd tim
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+l32@l32-VirtualBox:/tmp/sticky_dir$
+```
+
+```sh
+l32@l32-VirtualBox:/tmp/sticky_dir$ su - tim
+Password:
+tim@l32-VirtualBox:~$
+tim@l32-VirtualBox:~$ cd /tmp/
+tim@l32-VirtualBox:/tmp$ cd sticky_dir/
+tim@l32-VirtualBox:/tmp/sticky_dir$ ls -l
+total 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 1
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 2
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 3
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 4
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 5
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 6
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 7
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 8
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 9
+tim@l32-VirtualBox:/tmp/sticky_dir$ rm 6
+rm: remove write-protected regular empty file '6'? y
+rm: cannot remove '6': Permission denied
+tim@l32-VirtualBox:/tmp/sticky_dir$
+```
+
+```sh
+tim@l32-VirtualBox:/tmp/sticky_dir$ su - l32
+Password:
+l32@l32-VirtualBox:~$ cd /tmp/sticky_dir/
+l32@l32-VirtualBox:/tmp/sticky_dir$ ls -l
+total 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 1
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 2
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 3
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 4
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 5
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 6
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 7
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 8
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 9
+l32@l32-VirtualBox:/tmp/sticky_dir$ rm 6
+l32@l32-VirtualBox:/tmp/sticky_dir$ ls -l
+total 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 0
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 1
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 2
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 3
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 4
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 5
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 7
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 8
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:27 9
+l32@l32-VirtualBox:/tmp/sticky_dir$
+```
+
+- chattr / lsattr
+
+	- chattr - change file attributes on a Linux file system
+	- lsattr - list file attributes on a Linux second extended file system
+
+	Option | Attribute
+-------|-------------------------
+a | append only
+A | no atime updates
+c | compressed
+C | no copy on write
+d | no dump
+D | synchronous directory updates
+e | extent format
+i | immutable
+j | data journalling
+s | secure deletion
+S | synchronous update
+t | no tail-merging
+T | top of directory hierarchy
+u | undeletable
+
+```sh
+l32@l32-VirtualBox:~$ touch file.txt
+l32@l32-VirtualBox:~$ ls -l file.txt
+-rw-rw-r-- 1 l32 l32 0 Aug 13 12:38 file.txt
+l32@l32-VirtualBox:~$ chmod 777 file.txt
+l32@l32-VirtualBox:~$ ls -l file.txt
+-rwxrwxrwx 1 l32 l32 0 Aug 13 12:38 file.txt
+l32@l32-VirtualBox:~$ sudo chattr +i file.txt
+l32@l32-VirtualBox:~$ lsattr file.txt
+----i--------e-- file.txt
+l32@l32-VirtualBox:~$ rm -rf file.txt
+rm: cannot remove 'file.txt': Operation not permitted
+l32@l32-VirtualBox:~$
+```
+
+- chown
+
+	- change file owner and groups
+
+```sh
+```
+
+```sh
+```
 
 
