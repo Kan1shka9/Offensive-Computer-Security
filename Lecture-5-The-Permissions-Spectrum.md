@@ -33,7 +33,7 @@
 
 ###### [```Linux Boot Process```](http://www.thegeekstuff.com/2011/02/linux-boot-process/)
 
-![Image of LBP](images/linux-boot-process.png)
+![Image of LBP](images/5/linux-boot-process.png)
 
 - ```BIOS```
 - ```MBR```
@@ -276,3 +276,64 @@
 		- Programs starts with ```K``` are used during shutdown. ```K for kill```
 		- There are numbers right next to S and K in the program names. 
 		- Those are the sequence number in which the programs should be started or killed.
+
+###### Academic Ring Model
+
+- For fault tolerance, and security
+- Provide different levels of access 
+
+Ring | | Application
+-----|------|-------
+3 | Normal non-root | user applications
+2 | Device drivers | keyboard, mice
+1 | Device drivers | video card
+0 | Kernel
+
+![Image of ring](images/5/ring.jpg)
+
+- Things operate higher than ring 0
+
+Operating Mode |Full Form | Ring
+-----|----|---------
+IPMI | Intelligent Platform Management Interface | -3
+SMM | System Management Mode | -2
+BIOS | Basic Input/Output System | -1
+
+- The original ```Multics``` had ```8``` rings!
+	- had special register for ring #
+
+###### Practical Rings model
+
+- For fault tolerance, and security
+- Provide different levels of access 
+
+Rings | Apps
+----------|--------------
+4 | Sandboxed non-root user applications
+3 | Normal non-root user applications
+0 | Kernel / root user
+-1 | BIOS
+-2 | SMM
+-3 | IPMI (Servers)
+   | Physical Access
+
+###### Vulnerability Research
+
+- Privilege Escalation:
+	- Type of attack resulting in higher (or more) permissions for user/attacker.
+	- Goes beyond to -1, -2, -3 rings
+	- Sometimes going from 3 to -3 is harder than 3 to 0
+	![Image of ring](images/5/1.jpeg)
+	
+- Pivoting: Priv Esc to remote system
+
+![Image of priv](images/5/2.jpeg)
+
+- Pivoting: Lateral Movement
+
+![Image of priv](images/5/3.jpeg)
+
+![Image of priv](images/5/4.jpeg)
+
+
+
