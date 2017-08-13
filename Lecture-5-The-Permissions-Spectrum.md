@@ -699,10 +699,224 @@ l32@l32-VirtualBox:~$
 
 	- change file owner and groups
 
+```_rwxrwxrwx 1 owner:group```
+
 ```sh
+l32@l32-VirtualBox:~$ touch test.txt
+l32@l32-VirtualBox:~$ ls -l test.txt
+-rw-rw-r-- 1 l32 l32 0 Aug 13 13:40 test.txt
+l32@l32-VirtualBox:~$ sudo chown root:root test.txt
+l32@l32-VirtualBox:~$ ls -l test.txt
+-rw-rw-r-- 1 root root 0 Aug 13 13:40 test.txt
+l32@l32-VirtualBox:~$ sudo chown tim:root test.txt
+l32@l32-VirtualBox:~$ ls -l test.txt
+-rw-rw-r-- 1 tim root 0 Aug 13 13:40 test.txt
+l32@l32-VirtualBox:~$ sudo chown root:tim test.txt
+l32@l32-VirtualBox:~$ ls -l test.txt
+-rw-rw-r-- 1 root tim 0 Aug 13 13:40 test.txt
+l32@l32-VirtualBox:~$
+```
+
+- chgrp
+	
+	- change group ownership
+
+```sh
+l32@l32-VirtualBox:~$ ls -l test.txt
+-rw-rw-r-- 1 root root 0 Aug 13 13:40 test.txt
+l32@l32-VirtualBox:~$ sudo chgrp tim test.txt
+l32@l32-VirtualBox:~$ ls -l test.txt
+-rw-rw-r-- 1 root tim 0 Aug 13 13:40 test.txt
+l32@l32-VirtualBox:~$
+```
+
+###### [```/etc/passwd```](https://www.cyberciti.biz/faq/understanding-etcpasswd-file-format/) and [```/etc/shadow```](https://www.cyberciti.biz/faq/understanding-etcshadow-file/)
+
+```sh
+l32@l32-VirtualBox:~$ ls -l /etc/passwd
+-rw-r--r-- 1 root root 1737 Aug 13 12:28 /etc/passwd
+l32@l32-VirtualBox:~$
 ```
 
 ```sh
+l32@l32-VirtualBox:~$ ls -l /etc/shadow
+-rw-r----- 1 root shadow 1144 Aug 13 12:29 /etc/shadow
+l32@l32-VirtualBox:~$
 ```
 
+- Default is DES based, with a 2 character salt string [a–zA–Z0–9./]
+- Salt is used to perturb the hash, in one of 4096 ways
 
+###### The least privilege principle
+
+- Every process/user/program must be able to access only the information and resources that are necessary for its legitimate purpose
+
+	- Single no-login user accounts for services like httpd, msqld, etc...
+	- Jails
+	- Security in depth
+	- Makes logs cleaner
+
+###### chroot
+
+- The root directory ```\``` is stored within each process's entry in the process table. 
+- All the ```chroot()``` system call does is to change the location of the root directory for that process.
+	- Is seen as an OS-level virtualization mechanism.
+	- The result is called a ```chroot jail```
+		- Can be easily broken
+		- Nothing prevents a program from chrooting out of the jail typically...
+
+![Image of chroot](images/5/9.jpeg)
+
+###### File ownage and setuid setgid
+
+```_rwxrwxrwx 1 owner:group```
+
+- Set User Id (upon execution) and Set Group ID (upon execution). 
+	- Are flags that allow a binary to be executed with the permissions of the binary's ```owner```
+- Certain applications need to execute under other user account permissions
+	- ```passwd```
+		- modified the ```/etc/passwd``` or ```/etc/shadow``` files which are owned by root.
+		- Can't just let anyone edit this freely
+
+###### [Process Permissions: Euid vs Ruid](https://www.cyberciti.biz/tips/linux-more-on-user-id-password-and-group-management.html)
+
+- EUID
+
+```sh
+l32@l32-VirtualBox:~$ whoami
+l32
+l32@l32-VirtualBox:~$ id -un
+l32
+l32@l32-VirtualBox:~$
+```
+
+- RUID
+
+```sh
+l32@l32-VirtualBox:~$ id -ru
+1000
+l32@l32-VirtualBox:~$
+```
+
+- SUID
+
+###### setuid (as root) programs
+
+- These programs have complete access on a UNIX system
+- Virtually every attack chain involves a focus on attacking these programs
+	- They are the single points of failure
+	- Once attackers get any form of access, they want to escalate to root
+- [Find all SUID binaries](http://www.commandlinefu.com/commands/view/9479/find-all-suid-binaries)
+
+```
+find / -perm +6000 -type f -exec ls -ld {} \;
+sudo find / -user root -perm -4000 -print
+```
+
+###### Priv Esc Attack Surface
+
+- suid privilege escalation
+- kernel privilege escalation
+- daemon exploits / root process exploits
+- weak passwords
+
+###### setuid and setgid on directories
+
+- ```setuid``` cannot be enabled on the directory
+	- Is disabled on almost all unix systems
+- ```setgid``` on a directory
+	- New files and new subdirectories within inherit the directory's gid
+instead of the creator's primary gid
+	- Enables shared workspaces for groups
+
+###### Access Control Lists
+
+- Usually are disabled by default
+- Extendeds the ```owner/group/other``` access model to allow much finer control
+	- Can specify permissions for each individual user and group defined in the system
+	- ```ACL``` is a mount option that can be turned on for specific permissions in the ```/etc/fstab``` file
+
+		```
+		UUID=65a4eb31-feac-4a62-8f14-245ddd76604d /               ext4    errors=remount-ro,acl 0       1
+		```
+	
+```sh
+l32@l32-VirtualBox:~$ sudo apt-get install acl
+l32@l32-VirtualBox:~$ sudo apt-get install eiciel
+```
+
+- ```setfacl``` 
+	- set file access control lists
+
+```sh
+l32@l32-VirtualBox:~$ sudo /usr/sbin/groupadd developer
+l32@l32-VirtualBox:~$ sudo /usr/sbin/groupadd testers
+l32@l32-VirtualBox:~$ tail /etc/group
+ssh:x:117:
+bluetooth:x:118:
+scanner:x:119:
+l32:x:1000:
+lpadmin:x:120:l32
+sambashare:x:121:l32
+vboxsf:x:999:
+tim:x:1001:
+developer:x:1002:
+testers:x:1003:
+l32@l32-VirtualBox:~$ touch mat.txt
+l32@l32-VirtualBox:~$ ls -l mat.txt
+-rw-rw-r-- 1 l32 l32 0 Aug 13 15:57 mat.txt
+l32@l32-VirtualBox:~$ chmod 000 mat.txt
+l32@l32-VirtualBox:~$ ls -l mat.txt
+---------- 1 l32 l32 0 Aug 13 15:57 mat.txt
+l32@l32-VirtualBox:~$ setfacl -m group:developer:r mat.txt
+l32@l32-VirtualBox:~$ ls -l mat.txt
+----r-----+ 1 l32 l32 0 Aug 13 15:57 mat.txt
+l32@l32-VirtualBox:~$ setfacl -m user:l32:rwx mat.txt
+l32@l32-VirtualBox:~$ ls -l mat.txt
+----rwx---+ 1 l32 l32 0 Aug 13 15:57 mat.txt
+l32@l32-VirtualBox:~$
+```
+
+If ```la -l``` shows a ```+``` in the end it means ACL is enabled on the file.
+
+- ```getfacl```
+
+```sh
+l32@l32-VirtualBox:~$ getfacl mat.txt
+# file: mat.txt
+# owner: l32
+# group: l32
+user::---
+user:l32:rwx
+group::---
+group:developer:r--
+mask::rwx
+other::---
+
+l32@l32-VirtualBox:~$
+```
+
+###### [Extended file attributes (xattr)](https://linux-audit.com/using-xattrs-extended-attributes-on-linux/)
+
+- Supported by ext2, ext3, ext4, JFS, ReiserFS, XFS, Btrfs
+
+```sh
+sudo apt install python-xattr
+```
+
+```sh
+l32@l32-VirtualBox:~$ touch sample
+l32@l32-VirtualBox:~$ ls -l sample
+-rw-rw-r-- 1 l32 l32 0 Aug 13 16:21 sample
+l32@l32-VirtualBox:~$ xattr -l sample
+l32@l32-VirtualBox:~$ setfacl -m group:developer:r sample
+l32@l32-VirtualBox:~$ ls -l sample
+-rw-rw-r--+ 1 l32 l32 0 Aug 13 16:21 sample
+l32@l32-VirtualBox:~$ xattr -l sample
+system.posix_acl_access:
+0000   02 00 00 00 01 00 06 00 FF FF FF FF 04 00 06 00    ................
+0010   FF FF FF FF 08 00 04 00 EA 03 00 00 10 00 06 00    ................
+0020   FF FF FF FF 20 00 04 00 FF FF FF FF                .... .......
+
+l32@l32-VirtualBox:~$
+```
