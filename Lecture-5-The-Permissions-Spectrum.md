@@ -663,7 +663,7 @@ l32@l32-VirtualBox:/tmp/sticky_dir$
 	- chattr - change file attributes on a Linux file system
 	- lsattr - list file attributes on a Linux second extended file system
 
-	Option | Attribute
+Option | Attribute
 -------|-------------------------
 a | append only
 A | no atime updates
