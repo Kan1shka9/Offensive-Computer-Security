@@ -168,6 +168,19 @@ Answer the following:
 
 - [10 points] Explain 3 of the vulnerabilities did the researchers find?  What impacts did they have?
 
+	- Insecure Input Validation
+		- Vulnerable Script - login.cgi
+		- Only client side validation on username/password field leading to buffer overflow
+	
+	- Shell Injection Vulnerabilities
+		- 15 CGI programs which call system function which lead to execution of ``` 127.0.0.1`sleep 60` ```
+	
+	- Buffer Overflow Vulnerabilities
+		- strcpy function in login.cgi vulnerable to BOF
+		- No DEP
+		- No stack canaries
+		- Partial ASLR implementation
+
 
 ###### 8) [25 points] Here’s a scenario, which is going to take some googling / research: 
 
