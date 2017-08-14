@@ -899,6 +899,9 @@ l32@l32-VirtualBox:~$
 ###### [Extended file attributes (xattr)](https://linux-audit.com/using-xattrs-extended-attributes-on-linux/)
 
 - Supported by ext2, ext3, ext4, JFS, ReiserFS, XFS, Btrfs
+- Extensible mechanism to store metadata along files
+- With ```xattrs``` more information can be stored about the file.
+- By default only root can use ```xattr```, but can be enabled for all in ```/etc/fstab``` with the ```user_xattr``` option
 
 ```sh
 sudo apt install python-xattr
@@ -919,4 +922,296 @@ system.posix_acl_access:
 0020   FF FF FF FF 20 00 04 00 FF FF FF FF                .... .......
 
 l32@l32-VirtualBox:~$
+```
+
+###### tty
+
+- TeleTYpewriter
+- A TTY is a native terminal device
+- The backend is either kernel or hardware emulated
+- TTY ports are direct connections to the computer
+	- keyboard, mouse, or serial connection
+- No ```GUI``` (i.e. not the X environment)
+- ```who```
+
+```sh
+l32@l32-VirtualBox:~$ who
+l32      tty7         2017-08-12 16:14 (:0)
+l32      pts/1        2017-08-12 16:14 (10.0.0.95)
+l32@l32-VirtualBox:~$
+```
+
+- ```chvt```
+	- change foreground virtual terminal
+
+```sh
+l32@l32-VirtualBox:~$ man chvt
+NAME
+       chvt - change foreground virtual terminal
+
+SYNOPSIS
+       chvt N
+
+DESCRIPTION
+       The  command  chvt  N makes /dev/ttyN the foreground terminal.  (The corresponding screen is created if it did
+       not exist yet.  To get rid of unused VTs, use deallocvt(1).)  The key combination (Ctrl-)LeftAlt-FN (with N in
+       the range 1-12) usually has a similar effect.
+l32@l32-VirtualBox:~$
+```
+
+###### pts
+
+- Pseudo Terminal Slave
+- Terminal emulated by another program
+	- xterm
+	- screen
+	- ssh
+	- expect
+	- GNOME terminal
+	- Mac OSX terminal
+
+###### Daemons
+
+- View them via ```service``` command
+
+```sh
+l32@l32-VirtualBox:~$ /usr/sbin/service --status-all
+ [ + ]  alsa-utils
+ [ - ]  anacron
+ [ + ]  apparmor
+ [ + ]  apport
+ [ - ]  bluetooth
+ [ - ]  bootmisc.sh
+ [ - ]  checkfs.sh
+ [ - ]  checkroot-bootclean.sh
+ [ - ]  checkroot.sh
+ [ + ]  console-setup
+ [ + ]  cron
+ [ + ]  dbus
+ [ + ]  grub-common
+ [ - ]  hostname.sh
+ [ - ]  hwclock.sh
+ [ + ]  irqbalance
+ [ + ]  keyboard-setup
+ [ - ]  killprocs
+ [ + ]  kmod
+ [ + ]  lightdm
+ [ - ]  mountall-bootclean.sh
+ [ - ]  mountall.sh
+ [ - ]  mountdevsubfs.sh
+ [ - ]  mountkernfs.sh
+ [ - ]  mountnfs-bootclean.sh
+ [ - ]  mountnfs.sh
+ [ + ]  network-manager
+ [ + ]  networking
+ [ + ]  ntp
+ [ + ]  ondemand
+ [ - ]  plymouth
+ [ - ]  plymouth-log
+ [ - ]  pppd-dns
+ [ + ]  procps
+ [ + ]  rc.local
+ [ + ]  resolvconf
+ [ - ]  rsync
+ [ + ]  rsyslog
+ [ - ]  sendsigs
+ [ + ]  ssh
+ [ - ]  thermald
+ [ + ]  udev
+ [ + ]  ufw
+ [ - ]  umountfs
+ [ - ]  umountnfs.sh
+ [ - ]  umountroot
+ [ + ]  urandom
+ [ - ]  uuidd
+ [ + ]  whoopsie
+ [ - ]  x11-common
+l32@l32-VirtualBox:~$
+```
+- Background processes
+	- syslogd (system logging process)
+	- sshd (ssh daemon for incoming ssh connections)
+- Almost all daemons are spawned by ```init```
+- Standard behavior
+	- Have no tty
+	- Ignore all terminal signals except ```SIGTERM```
+	- Have no open file descriptors (no I/O)
+	- Dissassociated from process group
+
+###### Kernel Modules
+
+- A Loadable Kernel Module ```LKM``` is an object file that contains code that extends the running kernel.
+	- Typically used to add support for new hardware, file systems, or adding system calls
+	- Convenient method for modifying the kernel
+		- Can be abused by attackers though
+
+###### [cronjobs](https://www.cyberciti.biz/faq/how-do-i-add-jobs-to-cron-under-linux-or-unix-oses/)
+
+- cron is the time-based job schedule in Unix systems.
+- cron enables users to schedule jobs (commands or shell scripts) to run periodically or at certain times or dates
+- Commonly used to automate system maintenance or administration
+
+```sh
+l32@l32-VirtualBox:~$ cat /etc/crontab
+
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user  command
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+#
+l32@l32-VirtualBox:~$
+```
+
+
+Directory	| Description
+----------|-----------------
+/etc/cron.d/	| Put all scripts here and call them from /etc/crontab file.
+/etc/cron.daily/	| Run all scripts once a day
+/etc/cron.hourly/ | Run all scripts once an hour
+/etc/cron.monthly/ | Run all scripts once a month
+/etc/cron.weekly/ | Run all scripts once a week
+
+```sh
+l32@l32-VirtualBox:~$ ls /etc/cro*
+/etc/crontab
+
+/etc/cron.d:
+anacron  john  popularity-contest
+
+/etc/cron.daily:
+0anacron  apport  apt-compat  bsdmainutils  dpkg  logrotate  man-db  mlocate  ntp  passwd  popularity-contest  update-notifier-common
+
+/etc/cron.hourly:
+
+/etc/cron.monthly:
+0anacron
+
+/etc/cron.weekly:
+0anacron  fstrim  man-db  update-notifier-common
+l32@l32-VirtualBox:~$
+```
+
+- List all your cron jobs
+
+```sh
+l32@l32-VirtualBox:~$ crontab -l
+no crontab for l32
+l32@l32-VirtualBox:~$
+l32@l32-VirtualBox:~$ sudo crontab -u root -l
+no crontab for root
+l32@l32-VirtualBox:~$
+```
+
+###### Command history
+
+- View previous commands
+
+```sh
+$ history
+```
+
+- Repeat previous commands
+
+```sh
+l32@l32-VirtualBox:~$ !!
+l32@l32-VirtualBox:~$ !ssh
+```
+
+- Print the command instead of repeating it
+
+```sh
+l32@l32-VirtualBox:~$ !ssh:p
+```
+
+###### logs
+
+- Logs are stored in /var/log/
+
+File | Description
+-----|----------------
+messages | General log messages
+auth.log, faillog, lastlog | authentication logs
+boot.log | System boot log
+syslog | a log file and a C command
+daemon.log | running services such as ntpd, httpd, and etc logs
+kern.log | kernel log file
+mysql.log, mysql.err | database logs (different if postgres, mongo, or other DB)
+user.log | user level/application logs
+/var/log/apache2/ | apache2 logs
+/var/log/snort/ | snort logs 
+
+- GUI application to view logs ```gnome-system-log```
+
+```sh
+l32@l32-VirtualBox:~$ sudo apt install gnome-system-log
+```
+
+![Image of Yaktocat](images/5/10.jpeg)
+
+- Logs are important also for attackers
+
+	- Brute force (i.e. ssh) attempts leave a big footprint
+	- Remote logins (ips/domains are logged)
+	- System modification 
+	- Kernel modification
+	- Module loading / unloading
+	- Daemon logs
+	- Firewall / Gateway / Traffic logs
+		- IDS
+		- IPS
+	- AD / LDAP / SCP  logs
+
+###### Linux Firewalls (host based)
+
+- Modern Linux host-based firewalls rely on a ```kernel-based system``` called ```netfilter```
+- The ```iptables``` user-space tool allows for managing ```netfilter```
+-  Netfilter:
+	- It is a framework within the linux kernel
+	- It has 3 standard tables: ```filter```, ```nat```, ```mangle```
+	- It is primarily connection-tracking system
+	- Does NOT filter traffic itself, it provides functions for other tools to do that
+- Netfilter framework tables
+	- ```Filter```
+		- Default and most basic
+		- INPUT, OUTPUT, FORWARD chains
+		- Responsible for system protection
+	- ```NAT```
+		- Network Address Translation
+		- MASQUERADE usage allows for routing multiple private IP addr's through a single public IP addr.
+	- ```Mangle```
+		- For changing certain packet fields prior to local delivery.
+- ```iptables```
+	- An iptables chain is a collection of rules that are compared, in order, against packets that share common characteristics (inbound packets vs outbound)
+	- ```iptables``` Policy Requirements
+		- Should be able to initiate the following through to firewall, to outside servers
+			- Domain Name System (DNS) queries
+			- File Transfer Protocol (FTP) transfers
+			- Network Time Protocol (NTP) queries
+			- Secure SHell (SSH) queries
+			- Simple Mail Transfer Protocol (SMTP) sessions
+			- Web Sessions over HTTP/HTTPS
+			- WHOIS queries
+		- Sessions initiated from the internal network should be statefully tracked by iptables
+			- Packets that do not conform to a valid state should be logged, and dropped
+			- Firewall should be configured with a default log and drop policy, to guard against any stray packets, port scans or unallowed connection attempts
+			- Perhaps block all incoming SSH traffic if applicable
+
+
+
+###### ports and services
+
+The ```/etc/services``` file contains network port names and numbers which can be used to determine firewall rules
+
+```sh
+l32@l32-VirtualBox:~$ cat /etc/services
 ```
