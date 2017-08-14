@@ -147,6 +147,28 @@ l32@l32-VirtualBox:~$
 
 Both the above operations require normal user privileges.
 
+###### 7) [20 points] Intelligent Platform Management Interface (IPMI) Questions.  
+
+[Illuminating the Security Issues Surrounding
+Lights-Out Server Management](https://jhalderm.com/pub/papers/ipmi-woot13.pdf) 
+
+Answer the following:
+
+- What are the author’s main findings, and the impact of these findings?
+	- Insecure Input Validation leading to Privilege Escalation
+	- Shell Injection Vulnerabilities leading to _root_
+	- Buffer Overflow Vulnerabilities with no exploit mitigation leading to _root_
+	
+- What countermeasures / practices do the authors suggest?
+	- IPMI firmware up to date
+	- Change default passwords
+	- Never configure IPMI devices on public IP addresses
+	- These devices should be isolated either on a physically separate management network or on a management VLAN 
+	- Operators who do not need IPMI should disable it entirely if possible
+
+- [10 points] Explain 3 of the vulnerabilities did the researchers find?  What impacts did they have?
+
+
 ###### 8) [25 points] Here’s a scenario, which is going to take some googling / research: 
 
 >You’ve been hired to do incident response/investigation at a local small coffee shop, and the believe that their webserver has been hacked when the boss was out of town, as the website has been defaced with various rantings and graffiti from disapproving coffee-”fascists”.  
