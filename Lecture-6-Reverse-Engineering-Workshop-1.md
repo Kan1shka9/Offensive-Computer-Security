@@ -428,7 +428,7 @@ sub esp, x		// Make room for locals
 - Epilog
 
 ``` 
-add esp, x		// move esp back to ebp
+mov esp, ebp		// move esp back to ebp
 pop ebp			// pop the top of the stack into ebp
 ret			// return to the address on top of the stack
 ```
