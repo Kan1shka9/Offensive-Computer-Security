@@ -1,6 +1,8 @@
 #### Lecture 6: Reverse Engineering Workshop 1
 
-###### Static- Looking at the code, figure things out
+###### Static
+
+- Looking at the code, figure things out
 - A safer approach
 - Not running the code!
 - Tools
@@ -13,7 +15,9 @@
 	- Changing function prototypes
 	- Coloring, grouping and renaming nodes (IDA)
 
-###### Dynamic- Examine the process during execution
+###### Dynamic
+
+- Examine the process during execution
 - Can see the values in real time
 - Registers, memory contents, etc.
 - Allows manipulation of the process
@@ -28,9 +32,15 @@
 		- Linux
 			- GDB
 - Features of good debugger
-	- Set breakpoints	- Step into / over	- Show loaded modules, SEH chain, etc.	- Memory searching###### PE
+	- Set breakpoints
+	- Step into / over
+	- Show loaded modules, SEH chain, etc.
+	- Memory searching
 
-- Portable Executable- File format for executables, object code and DLLs, used in 32-bit and 64-bit versions of Windows operating systems
+###### PE
+
+- Portable Executable
+- File format for executables, object code and DLLs, used in 32-bit and 64-bit versions of Windows operating systems
 
 ![Image of PE](images/6/PE.png)
 
@@ -40,12 +50,24 @@
 - A common standard file format for executables, object code, shared libraries, and core dumps
 - Linux, Unix, Apple OS
 
-![Image of ELF](images/6/ELF.png)###### PE and ELF
+![Image of ELF](images/6/ELF.png)
 
-- PE and ELF are a big collection of ```fields``` and ```sections```- Fields will have a particular meaning and hold a particular value	- Date created, last modified, number of sections, image base, etc.- A section is, generally, a logical collection of code or data	- Has permissions (read/write/execute)
+###### PE and ELF
+
+- PE and ELF are a big collection of ```fields``` and ```sections```
+- Fields will have a particular meaning and hold a particular value
+	- Date created, last modified, number of sections, image base, etc.
+- A section is, generally, a logical collection of code or data
+	- Has permissions (read/write/execute)
 	- Has a name (.text, .bss, etc.)
 - Conclusions drawn form ```fields``` and ```sections```
-	- Can look at what libraries the binary is loading	- Can look at what functions are used in a library		- Find vulns	- Can parse data sections for strings		- Very helpful on CTFs	- Can help determine if a binary is packed		- Weird section names or sizes, lack of strings, lack of imports
+	- Can look at what libraries the binary is loading
+	- Can look at what functions are used in a library
+		- Find vulns
+	- Can parse data sections for strings
+		- Very helpful on CTFs
+	- Can help determine if a binary is packed
+		- Weird section names or sizes, lack of strings, lack of imports
 - Analyze
 	- PE
 		- CFF Explorer
@@ -54,7 +76,9 @@
 	- ELF
 		- readelf
 		- objdump
-		- file###### CFF Explorer
+		- file
+
+###### CFF Explorer
 
 - Not packed exe
 
@@ -154,13 +178,24 @@ l32@l32-VirtualBox:~$
 instruction source, dest
 ```
 
-```mov %eax, %edx```
-Move eax into edx- Intel```instruction dest, source
+```
+mov %eax, %edx
 ```
 
-```mov edx, eax
+Move eax into edx
+
+
+- Intel
+
 ```
-Move eax into edx
+instruction dest, source
+```
+
+```
+mov edx, eax
+```
+
+Move eax into edx
 
 --
 
@@ -169,34 +204,56 @@ instruction source, dest
 ```
 mov eax, ecx
 ```
-Move into eax, the contents of ecx
 
-- Example 2```mov eax, [ecx]
-```
-Move into eax, the contents of what ecx points toThe brackets, ```[…]```, mean dereference the value between them
-In C, this is like a pointer dereference
+Move into eax, the contents of ecx
 
-```eax = *ecx```- Example 3```mov eax, 5
-```
-Move into eax, the value 5
+- Example 2
 
-- Example 4```mov edx, [0x12345678]
 ```
-Move into edx, what 0x12345678 points to
+mov eax, [ecx]
+```
+
+Move into eax, the contents of what ecx points to
+
+The brackets, ```[…]```, mean dereference the value between them
+
+In C, this is like a pointer dereference
+
+```
+eax = *ecx
+```
+
+- Example 3
+
+```
+mov eax, 5
+```
+
+Move into eax, the value 5
+
+- Example 4
+
+```
+mov edx, [0x12345678]
+```
+
+Move into edx, what 0x12345678 points to
 
 - Example 5
 
 ```
 call 0x12345678
 ```
-Call the function at 0x12345678
+
+Call the function at 0x12345678
 
 - Example 6
 
 ```
 cmp eax, 8
 ```
-Compare eax to 8
+
+Compare eax to 8
 
 Compare left to right
 
@@ -205,17 +262,28 @@ Compare left to right
 ```
 jmp 0x12345678
 ```
-Unconditional jump to 0x12345678
+
+Unconditional jump to 0x12345678
 
 - Example 8
 
 ```
 jle 0x12345678
 ```
-Jump to 0x12345678 if eax is less than or equal to 8- Example 9```jg 0x12345678
+
+Jump to 0x12345678 if eax is less than or equal to 8
+
+- Example 9
+
 ```
-Jump to 0x112345678 if eax is greater than 8- Example 10
-	![Image of ELF](images/6/13.png)
+jg 0x12345678
+```
+
+Jump to 0x112345678 if eax is greater than 8
+
+- Example 10
+
+	![Image of ELF](images/6/13.png)
 
 	- 2 memory addresses, relative to the pointer contained in ebp, have values. One has 4, one has 10.
 	- There is a comparison
@@ -227,21 +295,30 @@ jle 0x12345678
 ```
 sub esp, 0x10
 	There is room for 16 (0x10) bytes of locals, or 4 ints
-[ebp-0x4] = 0x4[ebp-0x8] = 0xaeax = [ebp-0x4]
-cmp eax, [ebp-0x8]	eax == [ebp-0x8]
+[ebp-0x4] = 0x4
+[ebp-0x8] = 0xa
+eax = [ebp-0x4]
+cmp eax, [ebp-0x8]
+	eax == [ebp-0x8]
 	4 == 10
 jge 0x80483d7
-	If 4 was >= 10, jmp	Else, continue execution
+	If 4 was >= 10, jmp
+	Else, continue execution
 mov eax, 0x1
-	Return value, eax, is either 1 or 0 depending on the comparisonjmp over the mov eax, 0leave and return
+	Return value, eax, is either 1 or 0 depending on the comparison
+jmp over the mov eax, 0
+leave and return
 ```
 
 ```
-mov DWORD PTR [ebp-0x4], 0x4```
+mov DWORD PTR [ebp-0x4], 0x4
+```
 
 DWORD PTR
-DWORD = the size
-PTR = dereference the value, accompanied by the brackets
+
+DWORD = the size
+
+PTR = dereference the value, accompanied by the brackets
 
 The address pointed to by the dereferenced value of ```[ebp-4]``` is getting 4 bytes moved into it, with the value of 4.
 
@@ -256,7 +333,8 @@ The address pointed to by the dereferenced value of ```[ebp-4]``` is getting 4 b
 ![Image of ELF](images/6/15.png)
 
 - Linux
-![Image of ELF](images/6/16.png)
+
+![Image of ELF](images/6/16.png)
 
 ###### Virtual Memory
 
@@ -267,7 +345,8 @@ The address pointed to by the dereferenced value of ```[ebp-4]``` is getting 4 b
 ![Image of ELF](images/6/18.jpeg)
 
 ###### Stack
-![Image of ELF](images/6/19.jpeg)
+
+![Image of ELF](images/6/19.jpeg)
 
 ![Image of ELF](images/6/20.jpeg)
 
@@ -275,7 +354,9 @@ The address pointed to by the dereferenced value of ```[ebp-4]``` is getting 4 b
 
 ###### Source to ASM discrepancy for ```if``` statements
 
-![Image of ELF](images/6/22.jpeg)###### Exercise
+![Image of ELF](images/6/22.jpeg)
+
+###### Exercise
 
 Produce the source code for the following function
 
@@ -312,12 +393,21 @@ Types : ```int```: DWORD - 4 bytes
 
 - Calling Conventions
 
-	- ```CDECL```		- Originates from C		- Args pushed on the stack, right to left (reverse)		- Calling function cleans up	- ```STDCall```		- Orignates from Microsoft
+	- ```CDECL```
+		- Originates from C
 		- Args pushed on the stack, right to left (reverse)
-		- Called function cleans up			- Must know how many bytes ahead of time- ```GCC``` vs ```Visual Studio```
+		- Calling function cleans up
+	- ```STDCall```
+		- Orignates from Microsoft
+		- Args pushed on the stack, right to left (reverse)
+		- Called function cleans up
+			- Must know how many bytes ahead of time
+
+- ```GCC``` vs ```Visual Studio```
 
 GCC tends to use : ```move [esp+x], arg```
-Visual studio tents to use : ```push arg```
+
+Visual studio tents to use : ```push arg```
 
 ![Image of ELF](images/6/25.jpeg)
 
@@ -325,9 +415,20 @@ GCC tends to use : ```move [esp+x], arg```
 
 ###### Stack Frame
 
-- Functions reference local variables and arguments via their stack frame pointers, ```esp``` and ```ebp```- So, every function has it’s own ```prolog``` and ```epilog``` to adjust ```esp``` and ```ebp``` to contain the correct values
+- Functions reference local variables and arguments via their stack frame pointers, ```esp``` and ```ebp```
+- So, every function has it’s own ```prolog``` and ```epilog``` to adjust ```esp``` and ```ebp``` to contain the correct values
 - Prolog
 
-```push ebp			// Save ebp on the stackmov ebp, esp		// Move ebp to the top of the stacksub esp, x			// Make room for locals```
+```
+push ebp		// Save ebp on the stack
+mov ebp, esp		// Move ebp to the top of the stack
+sub esp, x		// Make room for locals
+```
 
-- Epilogmove esp back to ebp, pop the top of the stack into ebp, return to the address on top of the stackadd esp, xpop ebpret
+- Epilog
+
+``` 
+add esp, x		// move esp back to ebp
+pop ebp			// pop the top of the stack into ebp
+ret			// return to the address on top of the stack
+```
