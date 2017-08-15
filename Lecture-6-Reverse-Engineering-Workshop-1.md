@@ -435,4 +435,7 @@ ret			// return to the address on top of the stack
 
 - Epilog 2 
 
-```leave		// leave is equivalent to : mov esp, ebp; pop ebpret```
+```
+leave			// leave is equivalent to : mov esp, ebp; pop ebp
+ret
+```
