@@ -310,3 +310,24 @@ Types : ```int```: DWORD - 4 bytes
 
 ###### Functions
 
+- Calling Conventions
+
+	- ```CDECL```		- Originates from C		- Args pushed on the stack, right to left (reverse)		- Calling function cleans up	- ```STDCall```		- Orignates from Microsoft
+		- Args pushed on the stack, right to left (reverse)
+		- Called function cleans up			- Must know how many bytes ahead of time- ```GCC``` vs ```Visual Studio```
+
+GCC tends to use : ```move [esp+x], arg```
+Visual studio tents to use : ```push arg```
+
+![Image of ELF](images/6/25.jpeg)
+
+![Image of ELF](images/6/26.jpeg)
+
+###### Stack Frame
+
+- Functions reference local variables and arguments via their stack frame pointers, ```esp``` and ```ebp```- So, every function has it’s own ```prolog``` and ```epilog``` to adjust ```esp``` and ```ebp``` to contain the correct values
+- Prolog
+
+```push ebp			// Save ebp on the stackmov ebp, esp		// Move ebp to the top of the stacksub esp, x			// Make room for locals```
+
+- Epilogmove esp back to ebp, pop the top of the stack into ebp, return to the address on top of the stackadd esp, xpop ebpret
