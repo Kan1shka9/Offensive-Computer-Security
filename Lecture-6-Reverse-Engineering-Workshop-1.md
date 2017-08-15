@@ -82,11 +82,11 @@
 
 - Not packed exe
 
-![Image of ELF](images/6/1.jpeg)
+![Image of CFF](images/6/1.jpeg)
 
 - Packed exe
 
-![Image of ELF](images/6/2.jpeg)
+![Image of CFF](images/6/2.jpeg)
 
 ###### readelf
 
@@ -138,11 +138,11 @@ l32@l32-VirtualBox:~$
 - Imports
 	- Filtered using the regular expression ```*str.*```
 
-![Image of ELF](images/6/3.jpeg)
+![Image of IDA](images/6/3.jpeg)
 
 - Strings
 
-![Image of ELF](images/6/4.jpeg)
+![Image of IDA](images/6/4.jpeg)
 
 ###### Exercise
 
@@ -150,25 +150,25 @@ l32@l32-VirtualBox:~$
 
 - CFF Explorer
 
-![Image of ELF](images/6/5.jpeg)
-![Image of ELF](images/6/6.jpeg)
-![Image of ELF](images/6/7.jpeg)
-![Image of ELF](images/6/8.jpeg)
-![Image of ELF](images/6/9.jpeg)
+![Image of CFF](images/6/5.jpeg)
+![Image of CFF](images/6/6.jpeg)
+![Image of CFF](images/6/7.jpeg)
+![Image of CFF](images/6/8.jpeg)
+![Image of CFF](images/6/9.jpeg)
 
 - IDA Pro
 
 	- Strings
 
-	![Image of ELF](images/6/10.jpeg)
+	![Image of IDA](images/6/10.jpeg)
 
 	- Imports
 
-	![Image of ELF](images/6/11.jpeg)
+	![Image of IDA](images/6/11.jpeg)
 
 	- Sections
 	
-	![Image of ELF](images/6/12.jpeg)
+	![Image of IDA](images/6/12.jpeg)
 	
 ###### Assembly
 
@@ -283,7 +283,7 @@ Jump to 0x112345678 if eax is greater than 8
 
 - Example 10
 
-	![Image of ELF](images/6/13.png)
+	![Image of Assembly](images/6/13.png)
 
 	- 2 memory addresses, relative to the pointer contained in ebp, have values. One has 4, one has 10.
 	- There is a comparison
@@ -324,43 +324,43 @@ The address pointed to by the dereferenced value of ```[ebp-4]``` is getting 4 b
 
 ```[ebp-4]``` is an int
 
-![Image of ELF](images/6/14.jpeg)
+![Image of Assembly](images/6/14.jpeg)
 
 ###### Process Memory Layout
 
 - Windows
 
-![Image of ELF](images/6/15.png)
+![Image of Windows](images/6/15.png)
 
 - Linux
 
-![Image of ELF](images/6/16.png)
+![Image of Linux](images/6/16.png)
 
 ###### Virtual Memory
 
-![Image of ELF](images/6/17.jpeg)
+![Image of Virtual](images/6/17.jpeg)
 
 ###### Registers
 
-![Image of ELF](images/6/18.jpeg)
+![Image of Registers](images/6/18.jpeg)
 
 ###### Stack
 
-![Image of ELF](images/6/19.jpeg)
+![Image of Stack](images/6/19.jpeg)
 
-![Image of ELF](images/6/20.jpeg)
+![Image of Stack](images/6/20.jpeg)
 
-![Image of ELF](images/6/21.jpeg)
+![Image of Stack](images/6/21.jpeg)
 
 ###### Source to ASM discrepancy for ```if``` statements
 
-![Image of ELF](images/6/22.jpeg)
+![Image of if](images/6/22.jpeg)
 
 ###### Exercise
 
 Produce the source code for the following function
 
-![Image of ELF](images/6/23.jpeg)
+![Image of Exercise](images/6/23.jpeg)
 
 - How many local variables, how many arguments, what types?
 - Hint:
@@ -387,7 +387,7 @@ Number of arguments : ```2```
 
 Types : ```int```: DWORD - 4 bytes
 
-![Image of ELF](images/6/24.jpeg)
+![Image of Solution](images/6/24.jpeg)
 
 ###### Functions
 
@@ -409,9 +409,9 @@ GCC tends to use : ```move [esp+x], arg```
 
 Visual studio tents to use : ```push arg```
 
-![Image of ELF](images/6/25.jpeg)
+![Image of Functions](images/6/25.jpeg)
 
-![Image of ELF](images/6/26.jpeg)
+![Image of Functions](images/6/26.jpeg)
 
 ###### Stack Frame
 
@@ -439,3 +439,12 @@ ret			// return to the address on top of the stack
 leave			// leave is equivalent to : mov esp, ebp; pop ebp
 ret
 ```
+
+![Image of Stack Frame](images/6/27.jpeg)
+![Image of Stack Frame](images/6/28.jpeg)
+![Image of Stack Frame](images/6/29.jpeg)
+![Image of Stack Frame](images/6/30.jpeg)
+![Image of Stack Frame](images/6/31.jpeg)
+![Image of Stack Frame](images/6/32.jpeg)
+![Image of Stack Frame](images/6/33.jpeg)
+![Image of Stack Frame](images/6/34.jpeg)
