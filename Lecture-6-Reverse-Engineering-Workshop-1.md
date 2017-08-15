@@ -432,3 +432,7 @@ add esp, x		// move esp back to ebp
 pop ebp			// pop the top of the stack into ebp
 ret			// return to the address on top of the stack
 ```
+
+- Epilog 2 
+
+```leave		// leave is equivalent to : mov esp, ebp; pop ebpret```
