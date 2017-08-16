@@ -448,3 +448,193 @@ ret
 ![Image of Stack Frame](images/6/32.jpeg)
 ![Image of Stack Frame](images/6/33.jpeg)
 ![Image of Stack Frame](images/6/34.jpeg)
+
+###### Exercise
+
+![Image of Stack Frame](images/6/35.jpeg)
+![Image of Stack Frame](images/6/36.jpeg)
+
+###### Recognizing Patterns
+
+In ```IDA```
+
+Dark blue line &rightarrow; ```LOOP```
+
+###### IDA – Simplifying the graph
+
+View &rightarrow; Open Subviews &rightarrow; Proximity Browser
+
+![Image of Stack Frame](images/6/37.jpeg)
+
+Function Prototype ```_fread```
+
+![Image of Stack Frame](images/6/38.jpeg)
+
+Rename
+
+![Image of Stack Frame](images/6/39.jpeg)
+
+![Image of Stack Frame](images/6/40.jpeg)
+
+![Image of Stack Frame](images/6/41.jpeg)
+
+Color Nodes
+
+![Image of Stack Frame](images/6/42.jpeg)
+
+![Image of Stack Frame](images/6/43.jpeg)
+
+![Image of Stack Frame](images/6/44.jpeg)
+
+Group Nodes
+
+```Ctrl``` select multiple nodes
+
+![Image of Stack Frame](images/6/45.jpeg)
+
+![Image of Stack Frame](images/6/46.jpeg)
+
+![Image of Stack Frame](images/6/47.jpeg)
+
+![Image of Stack Frame](images/6/48.jpeg)
+
+```;``` for comment
+
+![Image of Stack Frame](images/6/49.jpeg)
+
+Changing a function prototype
+
+Select a function &rightarrow; Y
+
+![Image of Stack Frame](images/6/50.jpeg)
+
+###### Exercise
+
+```number_checker.exe```
+
+Can you figure out the correct input to get the key program to print the key?
+
+![Image of Stack Frame](images/6/51.jpeg)
+
+![Image of Stack Frame](images/6/52.jpeg)
+
+![Image of Stack Frame](images/6/53.jpeg)
+
+![Image of Stack Frame](images/6/54.jpeg)
+
+![Image of Stack Frame](images/6/55.jpeg)
+
+![Image of Stack Frame](images/6/56.jpeg)
+
+![Image of Stack Frame](images/6/57.jpeg)
+
+![Image of Stack Frame](images/6/58.jpeg)
+
+![Image of Stack Frame](images/6/59.jpeg)
+
+![Image of Stack Frame](images/6/60.jpeg)
+
+![Image of Stack Frame](images/6/61.jpeg)
+
+![Image of Stack Frame](images/6/62.jpeg)
+
+![Image of Stack Frame](images/6/63.jpeg)
+
+![Image of Stack Frame](images/6/64.jpeg)
+
+![Image of Stack Frame](images/6/65.jpeg)
+
+![Image of Stack Frame](images/6/66.jpeg)
+
+```bash
+C:\Users\Win7-32>cd Desktop\FSU_Reversing_binaries
+
+C:\Users\Win7-32\Desktop\FSU_Reversing_binaries>python
+Python 2.7.13 (v2.7.13:a06454b1afa1, Dec 17 2016, 20:42:59) [MSC v.1500 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from os import system
+>>> for i in range(0,1000):
+...     print i
+...     system("number_checker.exe %d" % i)
+...
+0
+Closer, try again
+1
+1
+0
+2
+0
+3
+0
+4
+0
+5
+0
+6
+0
+7
+0
+8
+0
+9
+0
+10
+0
+11
+<---snip--->
+0
+700
+0
+701
+0
+702
+0
+703
+0
+704
+0
+705
+Great job!
+The key = r3v3rsing r0cks
+0
+706
+0
+707
+0
+708
+0
+709
+0
+710
+0
+711
+0
+712
+0
+713
+0
+714
+<---snip--->
+0
+991
+0
+992
+0
+993
+0
+994
+0
+995
+0
+996
+0
+997
+0
+998
+0
+999
+0
+>>>
+```
+
+![Image of Stack Frame](images/6/67.jpeg)
