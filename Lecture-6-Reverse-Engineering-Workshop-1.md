@@ -715,4 +715,15 @@ i r esp ebp ecx | Show the values of registers ESP, EBP, and ECX
 	- In fact, they all use Python except WinDBG
 	- There are awesome scripts that will import results from debuggers into IDA’s view, filling in all the registers operands for each instruction.
 
+###### Bytecode
+
+- What about bytecode?- .NET applications, java, python, etc.- Just download a disassembler- You’ll get near complete source code back- It’s really that easy…
+
 ###### Exercise
+
+###### Resources
+
+- Fantastic books	- Reversing: The secrets of reverse engineering
+	- The IDA Pro book
+	- The Art of Exploitation- Challenges
+	- [Crackme](http://crackmes.de/)	- [Woodmanns](http://185.62.190.110/)	- [smashthestack](http://smashthestack.org/)
