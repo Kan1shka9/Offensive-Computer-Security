@@ -637,4 +637,82 @@ The key = r3v3rsing r0cks
 >>>
 ```
 
-![Image of Stack Frame](images/6/67.jpeg)
+![Image of Stack Frame](images/6/67.jpeg)###### Debugging
+
+- Features of good debugger
+	- Set breakpoints
+	- Step into / over
+	- Show loaded modules, SEH chain, etc.
+	- Memory searching- WinDBG, OllyDBG, Immunity, IDA, GDB, etc. are good debuggers
+- Most of the Windows debuggers are similar	- Except WinDBG, WinDBG is more GDB like- If you want to skip over an instruction, or a function call, do it!- If you want to bypass the “authentication” method or make it return true… you can!- You can change register contents and memory values, whatever you want.- You can even patch programs (make changes and save it to a new executable).
+- ```F2``` will set a breakpoint in IDA, Olly, Immunity
+
+![Image of BP](images/6/68.jpeg)
+
+![Image of BP](images/6/69.jpeg)
+
+![Image of BP](images/6/70.jpeg)
+
+###### Exercise
+
+```number_checker.exe```
+
+Bypass the key check entirely
+
+![Image of BP](images/6/71.jpeg)
+
+![Image of BP](images/6/72.jpeg)
+
+![Image of BP](images/6/73.jpeg)
+
+![Image of BP](images/6/74.jpeg)
+
+![Image of BP](images/6/75.jpeg)
+
+![Image of BP](images/6/76.jpeg)
+
+Step Over &rightarrow; ```F8``` 
+
+![Image of BP](images/6/77.jpeg)
+
+###### [GDB](http://darkdust.net/files/GDB%20Cheat%20Sheet.pdf)
+
+Command | Description
+--------|-----------------
+gdb ./my_program | Launch gdb, debug my_program
+gdb --args ./my_program arg1 arg2 | Launch gdb, debug my_program, passing two arguments
+run | Run the application
+run arg1 arg2 | Run the application, pass two args
+run $(python –c “print ‘A’*1000”) | Run the application, pass one arg, just like regular shell execution
+set disassembly-flavor intel | Use Intel syntax
+disas [function_name] | Disassemble the chosen function
+break main | Set a breakpoint on the function “main”
+break ```*0x12345678``` | Set a breakpoint on the address ```*0x12345678```
+info breakpoints | Show information regarding breakpoints
+delete breakpoint 2 | Delete breakpoint 2
+delete breakpoints | Delete all breakpoints
+si| Step Instruction. Execute to next instruction, go into functions
+ni | Next Instruction. Execute to next instruction, go over functions
+x/5i $eip | Examine 5 instructions at EIP
+x/4xw $esp | Examine 4 hex words at ESP
+x/s 0x12345678 | Examine the string at 0x12345678
+x/5b $ecx | Examine 5 bytes at ECX
+i r | “info register”, show the values of all registers
+i r esp ebp ecx | Show the values of registers ESP, EBP, and ECX
+
+![Image of GDB](images/6/78.png)
+
+![Image of GDB](images/6/79.jpeg)
+
+![Image of GDB](images/6/80.jpeg)
+
+![Image of GDB](images/6/81.jpeg)
+
+###### Static vs Dynamic
+
+- Combination of the two will undoubtedly yield the best results
+- IDA, WinDBG, Immunity, GDB all have scripting
+	- In fact, they all use Python except WinDBG
+	- There are awesome scripts that will import results from debuggers into IDA’s view, filling in all the registers operands for each instruction.
+
+###### Exercise
