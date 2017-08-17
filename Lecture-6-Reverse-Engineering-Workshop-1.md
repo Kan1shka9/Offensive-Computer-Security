@@ -721,6 +721,14 @@ i r esp ebp ecx | Show the values of registers ESP, EBP, and ECX
 
 ###### Exercise
 
+```key_checker.exe```
+
+![Image of IDA](images/6/82.jpeg)
+
+![Image of IDA](images/6/83.jpeg)
+
+Opens a file using ```fopen``` called ```keyfile.txt```
+
 ###### Resources
 
 - Fantastic books	- Reversing: The secrets of reverse engineering
